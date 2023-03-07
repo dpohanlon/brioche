@@ -1,4 +1,4 @@
-'''
+"""
 
 Brioche: Tests for set enrichment.
 
@@ -11,7 +11,7 @@ free to vary within them, up to the maximum in 'reference').
 Performs a test using the chi-squared test statistic, either with a resampled
 distribution, or assuming a chi-squared distribution (>~ 5 counts per category).
 
-'''
+"""
 
 import numpy as np
 
@@ -20,20 +20,22 @@ from scipy.stats import fisher_exact
 
 from statsmodels.stats.multitest import fdrcorrection
 
+
 def countOcurrances(categoryIndices, data):
 
     n_categories = len(categoryIndices)
 
     observations = np.zeros(n_categories)
 
-    dataCats, dataCounts = map(list, np.unique(data, return_counts = True))
+    dataCats, dataCounts = map(list, np.unique(data, return_counts=True))
 
     for cat, count in list(zip(dataCats, dataCounts)):
         observations[categoryIndices[cat]] = count
 
     return observations
 
-def chi2(data, expected, signed = False):
+
+def chi2(data, expected, signed=False):
 
     val = (data - expected) ** 2 / expected
 
@@ -42,9 +44,11 @@ def chi2(data, expected, signed = False):
     else:
         return val
 
+
 def chi2Statistic(data, expected):
 
-    return np.sum(np.atleast_2d(chi2(data, expected)), axis = 1).squeeze()
+    return np.sum(np.atleast_2d(chi2(data, expected)), axis=1).squeeze()
+
 
 def calculateExpectation(occurances, nObservations):
 
@@ -53,13 +57,15 @@ def calculateExpectation(occurances, nObservations):
 
     return (occurances / np.sum(occurances)) * nObservations
 
-def nullDistribution(nObservations, reference, nSamples = 1):
+
+def nullDistribution(nObservations, reference, nSamples=1):
 
     nullProbs = reference / np.sum(reference)
 
-    samples = np.random.multinomial(nObservations, nullProbs, size = nSamples)
+    samples = np.random.multinomial(nObservations, nullProbs, size=nSamples)
 
     return samples
+
 
 def fisherTest2x2(observations, refOcurrances, catIdx):
 
@@ -76,12 +82,13 @@ def fisherTest2x2(observations, refOcurrances, catIdx):
 
     return pval
 
-def enrichment(reference, test, nTestSamples = 1000):
+
+def enrichment(reference, test, nTestSamples=1000):
 
     categories = np.unique(reference)
 
     # Category strings to indices
-    categories_to_index = {c : i for i, c  in enumerate(categories)}
+    categories_to_index = {c: i for i, c in enumerate(categories)}
 
     # Array of observation counts for category (index) i
     observations = countOcurrances(categories_to_index, test)
@@ -101,15 +108,19 @@ def enrichment(reference, test, nTestSamples = 1000):
 
     # Test individual categories also
 
-    chi2vals = chi2(observations, expectations, signed = True)
+    chi2vals = chi2(observations, expectations, signed=True)
 
-    chi2_categories = {categories[i] : chi2vals[i] for i in range(len(categories))}
+    chi2_categories = {categories[i]: chi2vals[i] for i in range(len(categories))}
 
-    pvals = [fisherTest2x2(observations, refOcurrances, i) for i in range(len(observations))]
+    pvals = [
+        fisherTest2x2(observations, refOcurrances, i) for i in range(len(observations))
+    ]
 
     _, pvals_corrected = fdrcorrection(pvals)
 
     # pval_categories = {categories[i] : fisherTest2x2(observations, refOcurrances, i) for i in range(len(observations))}
-    pval_categories = {categories[i] : pvals_corrected[i] for i in range(len(observations))}
+    pval_categories = {
+        categories[i]: pvals_corrected[i] for i in range(len(observations))
+    }
 
     return chi2Stat, chi2_categories, pval_categories, nullChi2Stats
