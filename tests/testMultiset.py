@@ -2,7 +2,7 @@ import numpy as np
 
 from brioche.multisetEnrichment import MultisetEnrichment
 
-from brioche.plot import plotModelArrays, plotModelHists
+from brioche.plot import plotModelArrays, plotModelHists, plotDeviations
 
 
 def runAll():
@@ -32,12 +32,12 @@ def testNoConstraintProd():
 
     data = np.random.poisson(means).astype(int)
 
-    row_names = [str(x) for x in np.random.randint(0, 1000, size=data.shape[0])]
-    col_names = [str(x) for x in np.random.randint(0, 1000, size=data.shape[1])]
+    col_names = [str(x) for x in np.random.randint(0, 1000, size=data.shape[0])]
+    row_names = [str(x) for x in np.random.randint(0, 1000, size=data.shape[1])]
 
     enrichment = MultisetEnrichment(data, row_names, col_names, likelihood_type="prod")
 
-    samples = enrichment.runMCMC(num_samples=1000)
+    samples = enrichment.runMCMC(num_samples=10000)
 
     plotModelHists(samples, data, name="prodLH-")
     plotModelArrays(samples, data, name="prodLH-")
@@ -68,8 +68,8 @@ def testNoConstraintSum():
 
     data = np.clip(data, 0, np.inf)
 
-    row_names = [str(x) for x in np.random.randint(0, 1000, size=data.shape[0])]
-    col_names = [str(x) for x in np.random.randint(0, 1000, size=data.shape[1])]
+    col_names = [str(x) for x in np.random.randint(0, 1000, size=data.shape[0])]
+    row_names = [str(x) for x in np.random.randint(0, 1000, size=data.shape[1])]
 
     enrichment = MultisetEnrichment(data, row_names, col_names, likelihood_type="sum")
 
@@ -77,6 +77,8 @@ def testNoConstraintSum():
 
     plotModelHists(samples, data, name="sumLH-")
     plotModelArrays(samples, data, name="sumLH-")
+
+    plotDeviations(samples, threshold=2, x_labels=col_names, y_labels=row_names)
 
     results = enrichment.getSummary(samples)
 

@@ -17,6 +17,8 @@ import numpy as np
 
 import pandas as pd
 
+import warnings
+
 import seaborn as sns
 
 colors = sns.color_palette("Set2")
@@ -128,4 +130,82 @@ def plotModelArrays(
     sns.heatmap(dev, xticklabels=x_labels, yticklabels=y_labels, cmap="PRGn")
     plt.xticks(rotation=90)
     plt.savefig(f"{name}deviations.pdf")
+    plt.clf()
+
+
+def plotDeviations(
+    samples, threshold=2, x_labels=[], y_labels=[], name="", likelihood_type="sum"
+):
+
+    dataDict = {}
+    for i in range(samples["freq_dev"].shape[1]):
+        for j in range(samples["freq_dev"].shape[2]):
+            dataDict[f"{x_labels[i]}_{y_labels[j]}"] = list(
+                np.array(samples["freq_dev"][:, i, j])
+            )
+
+    df = pd.DataFrame(dataDict).melt(value_name="deviation", var_name="cell")
+
+    stats = df.groupby("cell").agg({"deviation": ["mean", "std"]}).reset_index()
+
+    stats.columns = ["_".join(col).strip("_") for col in stats.columns.values]
+
+    stats["z"] = stats["deviation_mean"] / stats["deviation_std"]
+    stats["abs_z"] = np.abs(stats["z"])
+
+    df_stats = df.reset_index(drop=True).merge(
+        stats.reset_index(drop="True"), on="cell"
+    )
+
+    # Get the best (> threshold) cells and set their colour
+
+    bestCells = list(stats[np.abs(stats["z"]) > threshold]["cell"].values)
+    otherCells = list(stats[np.abs(stats["z"]) < threshold]["cell"].values)
+    colours = {}
+    for c in otherCells:
+        colours[c] = sns.color_palette("Blues")[0]
+    for i, c in enumerate(bestCells):
+        colours[c] = sns.color_palette("Set2")[i]
+
+    # Split data and plot separately
+
+    bestData = df_stats[df_stats["cell"].isin(bestCells)]
+    otherData = df_stats[df_stats["cell"].isin(otherCells)]
+
+    sns.kdeplot(
+        data=otherData.sort_values("abs_z", ascending=False),
+        x="deviation",
+        hue="cell",
+        legend=False,
+        palette=colours,
+        hue_order=stats.sort_values("abs_z", ascending=False)["cell"].values,
+        linewidth=1,
+        common_norm=False,
+    )
+    g = sns.kdeplot(
+        data=bestData.sort_values("abs_z", ascending=False),
+        x="deviation",
+        hue="cell",
+        legend=True,
+        palette=colours,
+        hue_order=stats.sort_values("abs_z", ascending=False)["cell"].values,
+        linewidth=3,
+        common_norm=False,
+    )
+
+    # A hack so that only the 'best' cells are annotated
+
+    warnings.filterwarnings("ignore")
+
+    plt.legend(labels=["_" for c in otherCells] + [c for c in bestCells])
+
+    plt.ylabel("Density", fontsize=18)
+    plt.xlabel("Deviation", fontsize=18)
+
+    g.set_yticklabels(g.get_yticks(), size=14)
+    g.set_xticklabels(g.get_xticks(), size=14)
+
+    warnings.resetwarnings()
+
+    plt.savefig(f"{name}deviations-kde.pdf")
     plt.clf()
