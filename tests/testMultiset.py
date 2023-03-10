@@ -1,3 +1,4 @@
+
 import numpy as np
 
 from brioche.multisetEnrichment import MultisetEnrichment
@@ -78,7 +79,7 @@ def testNoConstraintSum():
     plotModelHists(samples, data, name="sumLH-")
     plotModelArrays(samples, data, name="sumLH-")
 
-    plotDeviations(samples, threshold=2, x_labels=col_names, y_labels=row_names)
+    plotDeviations(samples, threshold=2, x_labels=col_names, y_labels=row_names, name="sumLH-")
 
     results = enrichment.getSummary(samples)
 
