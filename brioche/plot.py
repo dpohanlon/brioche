@@ -208,4 +208,5 @@ def plotDeviations(
     warnings.resetwarnings()
 
     plt.savefig(f"{name}deviations-kde.pdf")
+    plt.savefig(f"{name}deviations-kde.png", dpi = 300)
     plt.clf()
