@@ -44,7 +44,7 @@ jobs:
 
   build:
     needs: [test]
-    if: ${{ github.event.test.conclusion == 'success' }}
+    if: needs.test.result == 'success'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
