@@ -4,7 +4,7 @@
   Bayesian tests for set enrichment.
 </p>
 
-![Tests!](https://github.com/dpohanlon/brioche/actions/workflows/python-package.yml/badge.svg)
+![Tests!](https://github.com/dpohanlon/brioche/actions/workflows/python-package.yml/badge.svg?event=test)
 
 Installation
 ---
