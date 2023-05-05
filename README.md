@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="602" height="200" src="https://github.com/dpohanlon/brioche/assets/brioche.png">
+  <img width="602" height="200" src="https://github.com/dpohanlon/brioche/blob/main/assets/brioche.png">
   <br>
   Bayesian tests for set enrichment.
 </p>
@@ -48,5 +48,5 @@ plotDeviations(samples, threshold=2, x_labels=col_names, y_labels=row_names, nam
 ```
 
 <p align="center">
-  <img width="800" height="450" src="https://github.com/dpohanlon/brioche/assets/deviations.png">
+  <img width="800" height="450" src="https://github.com/dpohanlon/brioche/blob/main/assets/deviations.png">
 </p>
