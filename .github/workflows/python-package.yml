@@ -43,7 +43,8 @@ jobs:
       uses: codecov/codecov-action@v3
 
   build:
-
+    needs: [test]
+    if: ${{ github.event.test.conclusion == 'success' }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -63,13 +64,21 @@ jobs:
     - name: Poetry build
       run: |
         poetry build
+    # Save the build package as an artifact
+    - uses: actions/upload-artifact@v3
+      with:
+        path: dist/*
 
   publish:
     needs: [build]
     runs-on: ubuntu-latest
-
     steps:
-    # upload to PyPI on every tag starting with 'v'
+    - uses: actions/download-artifact@v3
+      with:
+        # unpacks default artifact into dist/
+        # if `name: artifact` is omitted, the action will create extra parent dir
+        name: artifact
+        path: dist
     - name: Publish to test PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
