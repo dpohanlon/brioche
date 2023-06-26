@@ -21,7 +21,17 @@ from scipy.stats import fisher_exact
 from statsmodels.stats.multitest import fdrcorrection
 
 
-def countOcurrances(categoryIndices, data):
+def countOcurrances(categoryIndices: dict, data: np.ndarray) -> np.ndarray:
+    """
+    Counts the occurrences of each category in the data.
+
+    Args:
+    categoryIndices (dict): A dictionary mapping categories to indices.
+    data (np.ndarray): The data, where each element is a category.
+
+    Returns:
+    np.ndarray: An array where the i-th element is the count of the i-th category.
+    """
 
     n_categories = len(categoryIndices)
 
@@ -35,7 +45,18 @@ def countOcurrances(categoryIndices, data):
     return observations
 
 
-def chi2(data, expected, signed=False):
+def chi2(data: np.ndarray, expected: np.ndarray, signed: bool=False) -> np.ndarray:
+    """
+    Calculate the Chi-square test statistic.
+
+    Args:
+    data (np.ndarray): The observed data.
+    expected (np.ndarray): The expected data.
+    signed (bool, optional): Whether to return a signed value. Defaults to False.
+
+    Returns:
+    np.ndarray: The Chi-square test statistic for each element.
+    """
 
     val = (data - expected) ** 2 / expected
 
@@ -45,12 +66,32 @@ def chi2(data, expected, signed=False):
         return val
 
 
-def chi2Statistic(data, expected):
+def chi2Statistic(data: np.ndarray, expected: np.ndarray) -> np.ndarray:
+    """
+    Compute the total Chi-square test statistic.
+
+    Args:
+    data (np.ndarray): The observed data.
+    expected (np.ndarray): The expected data.
+
+    Returns:
+    np.ndarray: The total Chi-square test statistic.
+    """
 
     return np.sum(np.atleast_2d(chi2(data, expected)), axis=1).squeeze()
 
 
-def calculateExpectation(occurances, nObservations):
+def calculateExpectation(occurances: np.ndarray, nObservations: int) -> np.ndarray:
+    """
+    Calculate the expected occurrences based on a reference distribution.
+
+    Args:
+    occurances (np.ndarray): The occurrences in the reference data.
+    nObservations (int): The total number of observations.
+
+    Returns:
+    np.ndarray: The expected occurrences.
+    """
 
     # If the categories are equally represented, the expectation is that
     # this is just a scaling of the 'underlying' reference distribution
@@ -58,7 +99,18 @@ def calculateExpectation(occurances, nObservations):
     return (occurances / np.sum(occurances)) * nObservations
 
 
-def nullDistribution(nObservations, reference, nSamples=1):
+def nullDistribution(nObservations: int, reference: np.ndarray, nSamples: int=1) -> np.ndarray:
+    """
+    Generate samples from the null distribution.
+
+    Args:
+    nObservations (int): The total number of observations.
+    reference (np.ndarray): The reference data.
+    nSamples (int, optional): The number of samples to generate. Defaults to 1.
+
+    Returns:
+    np.ndarray: The sampled data.
+    """
 
     nullProbs = reference / np.sum(reference)
 
@@ -67,7 +119,18 @@ def nullDistribution(nObservations, reference, nSamples=1):
     return samples
 
 
-def fisherTest2x2(observations, refOcurrances, catIdx):
+def fisherTest2x2(observations: np.ndarray, refOcurrances: np.ndarray, catIdx: int) -> float:
+    """
+    Perform a Fisher's exact test for a 2x2 contingency table.
+
+    Args:
+    observations (np.ndarray): The observed data.
+    refOcurrances (np.ndarray): The reference occurrences.
+    catIdx (int): The index of the category to test.
+
+    Returns:
+    float: The p-value from the test.
+    """
 
     obs = observations[catIdx]
     ref = refOcurrances[catIdx]
@@ -83,7 +146,19 @@ def fisherTest2x2(observations, refOcurrances, catIdx):
     return pval
 
 
-def enrichment(reference, test, nTestSamples=1000):
+def enrichment(reference: np.ndarray, test: np.ndarray, nTestSamples: int=1000) -> Tuple:
+    """
+    Perform an enrichment analysis.
+
+    Args:
+    reference (np.ndarray): The reference data.
+    test (np.ndarray): The test data.
+    nTestSamples (int, optional): The number of test samples to generate. Defaults to 1000.
+
+    Returns:
+    tuple: A tuple containing the Chi-square statistic, Chi-square values per category,
+           p-values per category, and the Chi-square statistic for the null distribution.
+    """
 
     categories = np.unique(reference)
 
