@@ -1,10 +1,11 @@
 
 import numpy as np
 
+import string
+
 from brioche.multisetEnrichment import MultisetEnrichment
 
 from brioche.plot import plotModelArrays, plotModelHists, plotDeviations
-
 
 def runAll():
 
@@ -33,10 +34,10 @@ def testNoConstraintProd():
 
     data = np.random.poisson(means).astype(int)
 
-    col_names = [str(x) for x in np.random.randint(0, 1000, size=data.shape[0])]
-    row_names = [str(x) for x in np.random.randint(0, 1000, size=data.shape[1])]
+    col_names = list(string.ascii_lowercase[:nx])
+    row_names = list(string.ascii_lowercase[-ny:])
 
-    enrichment = MultisetEnrichment(data, row_names, col_names, likelihood_type="prod")
+    enrichment = MultisetEnrichment(data, col_names, row_names, likelihood_type="prod")
 
     samples = enrichment.runMCMC(num_samples=10000)
 
@@ -53,8 +54,8 @@ def testNoConstraintSum():
     nx = 10
     ny = 15
 
-    means_rows = np.ones((nx, 1)) * 10
-    means_cols = np.ones((ny, 1)) * 10
+    means_cols = np.ones((nx, 1)) * 10
+    means_rows = np.ones((ny, 1)) * 10
 
     means_rows[1] += 2
     means_rows[3] += 1
@@ -69,10 +70,10 @@ def testNoConstraintSum():
 
     data = np.clip(data, 0, np.inf)
 
-    col_names = [str(x) for x in np.random.randint(0, 1000, size=data.shape[0])]
-    row_names = [str(x) for x in np.random.randint(0, 1000, size=data.shape[1])]
+    col_names = list(string.ascii_lowercase[:nx])
+    row_names = list(string.ascii_lowercase[-ny:])
 
-    enrichment = MultisetEnrichment(data, row_names, col_names, likelihood_type="sum")
+    enrichment = MultisetEnrichment(data, col_names, row_names, likelihood_type="sum")
 
     samples = enrichment.runMCMC(num_samples=10000)
 
