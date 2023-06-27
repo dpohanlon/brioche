@@ -16,6 +16,8 @@ import pandas as pd
 
 from pprint import pprint
 
+from typing import List, Union, Dict, Any
+
 from brioche.models import multisetModel
 
 
