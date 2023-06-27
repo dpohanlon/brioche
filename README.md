@@ -30,14 +30,14 @@ data = np.array([[30, 27, 10, ...], [28, 25, 11, ...], [31, 29, 15, ...], ...])
 ```
 
 <p align="center">
-  <img width="728" height="450" src="https://github.com/dpohanlon/brioche/blob/main/assets/data.png">
+  <img width="388" height="450" src="https://github.com/dpohanlon/brioche/blob/main/assets/data.png">
 </p>
 
 Import Brioche and create the multi-set enrichment object
 ```python
 from brioche.multisetEnrichment import MultisetEnrichment
 
-enrichment = MultisetEnrichment(data, row_names, col_names, likelihood_type="sum")
+enrichment = MultisetEnrichment(data, col_names, row_names, likelihood_type="sum")
 ```
 Optionally, specify whether there are total-sum constraints on the rows or columns
 ```python
