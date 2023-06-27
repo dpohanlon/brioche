@@ -21,6 +21,8 @@ import warnings
 
 import seaborn as sns
 
+from typing import List, Union, Dict, Any
+
 colors = sns.color_palette("Set2")
 
 
@@ -199,7 +201,7 @@ def plotDeviations(
     dataDict = {}
     for i in range(samples["freq_dev"].shape[1]):
         for j in range(samples["freq_dev"].shape[2]):
-            dataDict[f"{x_labels[i]}_{y_labels[j]}"] = list(
+            dataDict[f"{y_labels[i]}_{x_labels[j]}"] = list(
                 np.array(samples["freq_dev"][:, i, j])
             )
 
