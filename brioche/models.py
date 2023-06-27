@@ -6,17 +6,54 @@ import numpyro.distributions as dist
 import jax.numpy as jnp
 
 
-def likelihoodSum(freq_rows, freq_cols, freq_dev):
+def likelihoodSum(freq_rows: jnp.ndarray, freq_cols: jnp.ndarray, freq_dev: jnp.ndarray) -> jnp.ndarray:
+    """
+    Calculate the sum of frequencies. Frequencies are distributed across rows, columns, and an additional deviation factor.
+
+    Args:
+        freq_rows (jnp.ndarray): Array of frequencies distributed across rows.
+        freq_cols (jnp.ndarray): Array of frequencies distributed across columns.
+        freq_dev (jnp.ndarray): Array of deviation frequencies.
+
+    Returns:
+        jnp.ndarray: The total sum of all frequencies.
+    """
     return (freq_rows + freq_cols.T) + freq_dev
 
 
-def likelihoodProd(freq_rows, freq_cols, freq_dev):
+
+def likelihoodProd(freq_rows: jnp.ndarray, freq_cols: jnp.ndarray, freq_dev: jnp.ndarray) -> jnp.ndarray:
+    """
+    Calculate the product of frequencies. Frequencies are distributed across rows, columns, and an additional deviation factor.
+
+    Args:
+        freq_rows (jnp.ndarray): Array of frequencies distributed across rows.
+        freq_cols (jnp.ndarray): Array of frequencies distributed across columns.
+        freq_dev (jnp.ndarray): Array of deviation frequencies.
+
+    Returns:
+        jnp.ndarray: The total product of all frequencies.
+    """
     return (freq_rows @ freq_cols.T) * freq_dev
 
 
 def multisetModel(
-    data, priors, likelihood_type="sum", row_constraint=False, col_constraint=False
-):
+    data: jnp.ndarray, priors: dict, likelihood_type: str = "sum", row_constraint: bool = False, col_constraint: bool = False
+) -> None:
+    """
+    A generative model that considers constraints on rows, columns and prior distribution of frequencies. This model
+    utilizes either a sum-based or a product-based likelihood model for frequency distribution, as determined by the likelihood_type parameter.
+
+    Args:
+        data (jnp.ndarray): Observed data to be modeled.
+        priors (dict): Priors for the frequency distributions (keys include "row_means", "row_stds", "col_means", "col_stds", "dev_mean", "dev_std").
+        likelihood_type (str, optional): The type of likelihood function to use; "sum" or "prod". Defaults to "sum".
+        row_constraint (bool, optional): If True, a row constraint is applied. Defaults to False.
+        col_constraint (bool, optional): If True, a column constraint is applied. Defaults to False.
+
+    Returns:
+        None: The function performs its operations in-place.
+    """
 
     likelihood = likelihoodSum if likelihood_type == "sum" else likelihoodProd
 

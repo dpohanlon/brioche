@@ -21,10 +21,22 @@ import warnings
 
 import seaborn as sns
 
+from typing import List, Union, Dict, Any
+
 colors = sns.color_palette("Set2")
 
 
-def plotEnrichmentBars(pval_categories, name=None):
+def plotEnrichmentBars(pval_categories: dict, name: str = None) -> tuple:
+    """
+    Plots a bar chart to visualize the enrichment p-values of each category.
+
+    Args:
+        pval_categories (dict): A dictionary with categories as keys and their associated p-values as values.
+        name (str, optional): The name of the file where the plot will be saved. If None, the plot will not be saved. Defaults to None.
+
+    Returns:
+        tuple: A tuple containing the Figure and Axes instances of the plot.
+    """
 
     pvals_sorted = {
         n: v for n, v in sorted(list(pval_categories.items()), key=lambda x: x[1])
@@ -53,7 +65,18 @@ def plotEnrichmentBars(pval_categories, name=None):
     return fig, ax
 
 
-def plotModelHists(samples, data, name=""):
+def plotModelHists(samples: dict, data: np.ndarray, name: str = ""):
+    """
+    Plots histograms for the frequency of rows and columns from the given samples.
+
+    Args:
+        samples (dict): A dictionary containing samples of frequency distributions.
+        data (np.ndarray): The data to be modeled.
+        name (str, optional): The name of the file where the plot will be saved. If empty, the plot will not be saved. Defaults to "".
+
+    Returns:
+        None
+    """
 
     # Rows
 
@@ -79,8 +102,27 @@ def plotModelHists(samples, data, name=""):
 
 
 def plotModelArrays(
-    samples, data, x_labels=[], y_labels=[], name="", likelihood_type="sum"
+    samples: dict,
+    data: np.ndarray,
+    x_labels: list = [],
+    y_labels: list = [],
+    name: str = "",
+    likelihood_type: str = "sum",
 ):
+    """
+    Plot heatmap visualizations of the model parameters, normalized residuals and deviation parameters.
+
+    Args:
+        samples (dict): A dictionary containing samples of frequency distributions.
+        data (np.ndarray): The data to be modeled.
+        x_labels (list, optional): List of labels for the x-axis. Defaults to [].
+        y_labels (list, optional): List of labels for the y-axis. Defaults to [].
+        name (str, optional): The base name of the file where the plots will be saved. If empty, the plots will not be saved. Defaults to "".
+        likelihood_type (str, optional): The type of likelihood function to use; "sum" or "prod". Defaults to "sum".
+
+    Returns:
+        None
+    """
 
     # Parameters
 
@@ -134,13 +176,32 @@ def plotModelArrays(
 
 
 def plotDeviations(
-    samples, threshold=2, x_labels=[], y_labels=[], name="", likelihood_type="sum"
+    samples: dict,
+    threshold: float = 2,
+    x_labels: list = [],
+    y_labels: list = [],
+    name: str = "",
+    likelihood_type: str = "sum",
 ):
+    """
+    Plots kernel density estimate (KDE) plots of the deviation parameters and saves them in PDF and PNG formats.
+
+    Args:
+        samples (dict): A dictionary containing samples of frequency distributions.
+        threshold (float, optional): The threshold value for determining the 'best' cells based on absolute z-score. Defaults to 2.
+        x_labels (list, optional): List of labels for the x-axis. Defaults to [].
+        y_labels (list, optional): List of labels for the y-axis. Defaults to [].
+        name (str, optional): The base name of the file where the plots will be saved. If empty, the plots will not be saved. Defaults to "".
+        likelihood_type (str, optional): The type of likelihood function to use; "sum" or "prod". Defaults to "sum".
+
+    Returns:
+        None
+    """
 
     dataDict = {}
     for i in range(samples["freq_dev"].shape[1]):
         for j in range(samples["freq_dev"].shape[2]):
-            dataDict[f"{x_labels[i]}_{y_labels[j]}"] = list(
+            dataDict[f"{y_labels[i]}_{x_labels[j]}"] = list(
                 np.array(samples["freq_dev"][:, i, j])
             )
 
