@@ -18,7 +18,7 @@ import numpy as np
 from scipy.stats import chisquare as chisquare_test
 from scipy.stats import fisher_exact
 
-from typing import List, Union, Dict, Any
+from typing import List, Union, Dict, Any, Tuple
 
 from statsmodels.stats.multitest import fdrcorrection
 
