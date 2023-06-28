@@ -42,7 +42,7 @@ enrichment = MultisetEnrichment(data, col_names, row_names, likelihood_type="sum
 Optionally, specify whether there are total-sum constraints on the rows or columns
 ```python
 enrichment = MultisetEnrichment(data, row_names, col_names, row_constraint = True,
-								col_constraint = False, likelihood_type="sum")
+			col_constraint = False, likelihood_type="sum")
 ```
 
 `likelihood_type` determines the form of the likelihood model for each cell, and also therefore what the 'null' model is. Both assume that each cell is a combination of a row and a column term, and a term that describes the deviation of the cell from the row and column terms:
