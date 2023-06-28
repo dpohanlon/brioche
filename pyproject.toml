@@ -3,7 +3,7 @@ name = "brioche-enrichment"
 packages = [
 { include="brioche", from="." },
 ]
-version = "0.1.2"
+version = "0.1.2a"
 description = "Bayesian tests for set enrichment."
 authors = ["Daniel O'Hanlon <dpohanlon@gmail.com>"]
 license = "MIT"
